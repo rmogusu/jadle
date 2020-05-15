@@ -49,7 +49,7 @@ public class Sql2oReviewDao implements ReviewDao {
         int i = 1;
         for (Review review : unsortedReviews){
             int comparisonResult;
-            if (i == unsortedReviews.size()) { //we need to do some funky business here to avoid an arrayindex exception and handle the last element properly
+            if (i == unsortedReviews.size()) {
                 if (review.compareTo(unsortedReviews.get(i-1)) == -1){
                     sortedReviews.add(0, unsortedReviews.get(i-1));
                 }
@@ -57,21 +57,20 @@ public class Sql2oReviewDao implements ReviewDao {
             }
 
             else {
-                if (review.compareTo(unsortedReviews.get(i)) == -1) { //first object was made earlier than second object
+                if (review.compareTo(unsortedReviews.get(i)) == -1) {
                     sortedReviews.add(0, unsortedReviews.get(i));
                     i++;
-                } else if (review.compareTo(unsortedReviews.get(i)) == 0) {//probably should have a tie breaker here as they are the same.
+                } else if (review.compareTo(unsortedReviews.get(i)) == 0) {
                     sortedReviews.add(0, unsortedReviews.get(i));
                     i++;
                 } else {
-                    sortedReviews.add(0, unsortedReviews.get(i)); //push the first object to the list as it is newer than the second object.
+                    sortedReviews.add(0, unsortedReviews.get(i));
                     i++;
                 }
             }
         }
         return sortedReviews;
     }
-
     @Override
     public void deleteById(int id) {
         String sql = "DELETE from reviews WHERE id=:id";

@@ -1,6 +1,7 @@
 package models;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 
@@ -12,7 +13,6 @@ public class Review implements Comparable<Review>  {
     private int restaurantId;
     private long createdat;
     private String formattedCreatedAt;
-
     public Review(String content, String writtenBy, int rating, int restaurantId) {
         this.content = content;
         this.writtenBy = writtenBy;
@@ -26,22 +26,23 @@ public class Review implements Comparable<Review>  {
     public int compareTo(Review reviewObject) {
         if (this.createdat < reviewObject.createdat)
         {
-            return -1; //this object was made earlier than the second object.
+            return -1;
         }
-        else if (this.createdat > reviewObject.createdat){ //this object was made later than the second object
+        else if (this.createdat > reviewObject.createdat){
             return 1;
         }
         else {
-            return 0; //they were made at the same time, which is very unlikely, but mathematically not impossible.
+            return 0;
         }
     }
 
     public long getCreatedat() {
         return createdat;
+
     }
 
     public void setCreatedat() {
-        this.createdat = System.currentTimeMillis();
+       this.createdat = System.currentTimeMillis();
 
     }
 
@@ -58,6 +59,7 @@ public class Review implements Comparable<Review>  {
         SimpleDateFormat sdf = new SimpleDateFormat(datePatternToUse);
         this.formattedCreatedAt = sdf.format(date);
     }
+
 
 
 

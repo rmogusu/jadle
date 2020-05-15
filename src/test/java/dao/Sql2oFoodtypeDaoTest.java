@@ -18,8 +18,10 @@ public class Sql2oFoodtypeDaoTest {
 
     @Before
     public void setUp() throws Exception {
-        String connectionString = "jdbc:postgresql://localhost:5432/jadle_test";
-        Sql2o sql2o = new Sql2o(connectionString, "rose", "wambua");
+//        String connectionString = "jdbc:postgresql://localhost:5432/jadle_test";
+//        Sql2o sql2o = new Sql2o(connectionString, "rose", "wambua");
+        String connectionString = "jdbc:postgresql://ec2-52-71-85-210.compute-1.amazonaws.com:5432/d30at9d8mn3j89"; //!
+        Sql2o sql2o = new Sql2o(connectionString, "lwwpqeqpxnbasa", "63e7488a136d9016f8ec96923589c8ea697569ac2e0d87651adf591438deed80"); //!
         restaurantDao = new Sql2oRestaurantDao(sql2o);
         foodtypeDao = new Sql2oFoodtypeDao(sql2o);
         reviewDao = new Sql2oReviewDao(sql2o);

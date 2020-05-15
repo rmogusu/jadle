@@ -8,6 +8,7 @@ import models.Restaurant;
 import models.Review;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
+import spark.ModelAndView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,22 +16,34 @@ import java.util.Map;
 
 import static spark.Spark.*;
 
-public class App {
-
-    public static void main(String[] args) {
-        Sql2oFoodtypeDao foodtypeDao;
-        Sql2oRestaurantDao restaurantDao;
-        Sql2oReviewDao reviewDao;
-        Connection conn;
-        Gson gson = new Gson();
-
-        staticFileLocation("/public");
-        String connectionString = "jdbc:postgresql://localhost:5432/jadle";   //connect to jadle, not jadle_test! try not to copy paste
-        Sql2o sql2o = new Sql2o(connectionString, "rose", "wambua");
+    public class App {
+        static int getHerokuAssignedPort() {
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            if (processBuilder.environment().get("PORT") != null) {
+                return Integer.parseInt(processBuilder.environment().get("PORT"));
+            }
+            return 4567;
+        }
+        public static void main(String[] args) {
+            Sql2oFoodtypeDao foodtypeDao;
+            Sql2oRestaurantDao restaurantDao;
+            Sql2oReviewDao reviewDao;
+            Connection conn;
+            Gson gson = new Gson();
+            port(getHerokuAssignedPort());
+            staticFileLocation("/public");
+//        String connectionString = "jdbc:postgresql://localhost:5432/jadle";
+//        Sql2o sql2o = new Sql2o(connectionString, "rose", "wambua");
+            String connectionString = "jdbc:postgresql://ec2-52-71-85-210.compute-1.amazonaws.com:5432/d30at9d8mn3j89"; //!
+            Sql2o sql2o = new Sql2o(connectionString, "lwwpqeqpxnbasa", "63e7488a136d9016f8ec96923589c8ea697569ac2e0d87651adf591438deed80"); //!
         restaurantDao = new Sql2oRestaurantDao(sql2o);
         foodtypeDao = new Sql2oFoodtypeDao(sql2o);
         reviewDao = new Sql2oReviewDao(sql2o);
         conn = sql2o.open();
+
+        get("/", "application/json", (req, res) -> {
+            return gson.toJson(foodtypeDao.getAll());
+        });
 
         //CREATE
         post("/restaurants/:restaurantId/foodtypes/:foodtypeId", "application/json", (req, res) -> {
@@ -81,7 +94,7 @@ public class App {
             Review review = gson.fromJson(req.body(), Review.class);
             review.setCreatedat(); //I am new!
             review.setFormattedCreatedAt();
-            review.setRestaurantId(restaurantId); //we need to set this separately because it comes from our route, not our JSON input.
+            review.setRestaurantId(restaurantId);
             reviewDao.add(review);
             res.status(201);
             return gson.toJson(review);
@@ -93,9 +106,6 @@ public class App {
             res.status(201);
             return gson.toJson(foodtype);
         });
-
-
-
 
 
         //READ
@@ -133,7 +143,7 @@ public class App {
 
             return gson.toJson(allReviews);
         });
-        get("/restaurants/:id/sortedReviews", "application/json", (req, res) -> { //// TODO: 1/18/18 generalize this route so that it can be used to return either sorted reviews or unsorted ones.
+        get("/restaurants/:id/sortedReviews", "application/json", (req, res) -> {
             int restaurantId = Integer.parseInt(req.params("id"));
             Restaurant restaurantToFind = restaurantDao.findById(restaurantId);
             List<Review> allReviews;
@@ -173,4 +183,6 @@ public class App {
         });
 
     }
+
+
 }
